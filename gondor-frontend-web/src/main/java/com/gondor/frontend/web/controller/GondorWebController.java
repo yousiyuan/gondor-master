@@ -1,5 +1,6 @@
 package com.gondor.frontend.web.controller;
 
+import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
 import com.gondor.frontend.dto.Customer;
 import com.gondor.frontend.dto.Product;
 import com.gondor.frontend.web.controller.base.SuperController;
@@ -21,11 +22,29 @@ public class GondorWebController extends SuperController {
 
     private static final String KEY = "3BFBZ-ZKD3X-LW54A-ZT76D-E7AHO-4RBD5";
 
-    //TODO：
-    // 使用@Value注解读取Apollo中的配置test.apollo.info
-    // 这里将@Value读取不到配置时的默认值设置为NULL
+    //TODO：Apollo在Java Config中的使用方式
+    // @Value注解的正常用法，与读取本地配置无差异
+    // *
+    // *
+    // Spring中支持读取配置文件的方式，Apollo同样都支持并“热刷新”配置
+    // *
+    // *
+    // @ConfigurationProperties如果需要在Apollo配置变化时自动更新注入的值，需要配合使用EnvironmentChangeEvent或RefreshScope。
+
+    /**
+     * 使用@Value注解读取Apollo中的配置test.apollo.info，这里将@Value读取不到配置时的默认值设置为NULL
+     */
     @Value("${test.apollo.info:NULL}")
     private String valueInApollo;
+
+    /**
+     * 用来把配置的json字符串自动注入为对象
+     */
+    @ApolloJsonValue("${apollo.json.test:null}")
+    private Map<String, Object> json1;
+
+    @Value("${apollo.bussines.info:NULL}")
+    private String businessData;
 
     @GetMapping("/p/list")
     @ResponseBody
@@ -61,10 +80,19 @@ public class GondorWebController extends SuperController {
 
     @GetMapping("/apollo")
     @ResponseBody
-    public Map<String, Object> apolloTest() {
-        Map<String, Object> apolloConfig = new HashMap<>();
-        apolloConfig.put("test.apollo.info", valueInApollo);
-        return apolloConfig;
+    public Map<String, Object> testApollo() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("test.apollo.info", valueInApollo);
+        map.put("application", application.getPropertyNames());
+        map.put("datasource", datasource.getPropertyNames());
+        map.put("business", business.getPropertyNames());
+
+        map.put("message", json1.get("message"));
+        map.put("json.from.apollo", json1);
+
+        System.out.println(businessData);
+
+        return map;
     }
 
 }

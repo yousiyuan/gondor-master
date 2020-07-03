@@ -1,0 +1,93 @@
+package com.gondor.frontend.web.configuration;
+
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+
+@Slf4j
+public class ApolloClientConfig {
+
+    //TODO:获取默认namespace的配置（application）
+    @ApolloConfig
+    private Config applicationConfig;
+
+    //TODO:获取公共Namespace的配置
+    @ApolloConfig("datasource")
+    private Config datasourceConfig;
+
+    //TODO:获取公共Namespace的配置
+    @ApolloConfig("business")
+    private Config businessConfig;
+
+    public ApolloClientConfig() {
+        // 调用该方法是为了演示效果，实际工程不能这么干
+        this.apolloTest();
+    }
+
+    @Bean("application")
+    public Config applicationConfig() {
+        return this.applicationConfig;
+    }
+
+    @Bean("datasource")
+    public Config datasourceConfig() {
+        return this.datasourceConfig;
+    }
+
+    @Bean("business")
+    public Config businessConfig() {
+        return this.businessConfig;
+    }
+
+    /**
+     * Apollo的API使用方式
+     */
+    private void apolloTest() {
+        //TODO:获取默认namespace的配置（application）
+        Config appConfig = ConfigService.getAppConfig(); //config instance is singleton for each namespace and is never null
+        String someKey1 = "test.apollo.info";
+        String someDefaultValue1 = "someDefaultValueForTheKey";
+        String valueInApplicationNameSpace = appConfig.getProperty(someKey1, someDefaultValue1);
+        log.info("通过API方式读取Apollo配置：{}={}", someKey1, valueInApplicationNameSpace);
+
+        //TODO:获取公共Namespace的配置
+        String somePublicNamespace = "datasource";
+        Config nsConfig = ConfigService.getConfig(somePublicNamespace); //config instance is singleton for each namespace and is never null
+        String someKey2 = "app.db.info";
+        String someDefaultValue2 = "someDefaultValueForTheKey";
+        String valueInOtherNameSpace = nsConfig.getProperty(someKey2, someDefaultValue2);
+        log.info("通过API方式读取Apollo配置：{}={}", someKey2, valueInOtherNameSpace);
+
+        //TODO:监听配置变化事件
+        appConfig.addChangeListener((ConfigChangeEvent changeEvent) -> {
+            log.info("命名空间 {} 的配置信息发生变化", changeEvent.getNamespace());
+            for (String key : changeEvent.changedKeys()) {
+                ConfigChange change = changeEvent.getChange(key);
+                log.info(String.format("Found change - key: %s, oldValue: %s, newValue: %s, changeType: %s",
+                        change.getPropertyName(),
+                        change.getOldValue(),
+                        change.getNewValue(),
+                        change.getChangeType()));
+            }
+        });
+    }
+
+    //TODO:监听配置变化事件
+    @ApolloConfigChangeListener(value = {"datasource", "business"})
+    private void otherConfigOnChangeEvent(ConfigChangeEvent changeEvent) {
+        log.info("命名空间 {} 的配置信息发生变化", changeEvent.getNamespace());
+        for (String key : changeEvent.changedKeys()) {
+            ConfigChange change = changeEvent.getChange(key);
+            log.info(String.format("Found change - key: %s, oldValue: %s, newValue: %s, changeType: %s",
+                    change.getPropertyName(),
+                    change.getOldValue(),
+                    change.getNewValue(),
+                    change.getChangeType()));
+        }
+    }
+
+}
