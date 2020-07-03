@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * https://github.com/ctripcorp/apollo/wiki/Java客户端使用指南#1241-environment
+ */
 @Slf4j
 public class ApolloClientConfig {
 
