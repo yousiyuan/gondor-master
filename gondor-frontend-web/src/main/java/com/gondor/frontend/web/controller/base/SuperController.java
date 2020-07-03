@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gondor.frontend.client.CustomerApiClient;
 import com.gondor.frontend.client.ProductApiClient;
 import com.gondor.frontend.client.ThirdPartyApiClient;
+import com.gondor.frontend.web.constant.ApolloConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class SuperController {
@@ -29,5 +30,8 @@ public abstract class SuperController {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected ApolloConstant apolloConstant;
 
 }

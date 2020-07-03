@@ -1,8 +1,12 @@
 package com.gondor.frontend.web.configuration;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.gondor.frontend.web.constant.ApolloConstant;
+import com.gondor.master.utils.SpringContextUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -21,7 +25,14 @@ import org.springframework.context.annotation.Import;
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"com.gondor.frontend.client"})
 @Configuration
-@Import(value = {BalanceConfig.class, JacksonConfig.class, ApolloClientConfig.class})
+@Import(value = {SpringContextUtils.class, BalanceConfig.class, JacksonConfig.class, ApolloClientConfig.class})
 @ComponentScan(basePackages = {"com.gondor.frontend.fallbackfactory"})
 public class GondorWebConfiguration {
+
+    @Bean
+    @ConfigurationProperties(prefix = "app")
+    public ApolloConstant apolloConstant() {
+        return new ApolloConstant();
+    }
+
 }

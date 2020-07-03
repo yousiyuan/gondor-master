@@ -4,11 +4,17 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import com.gondor.master.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
+//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+//import org.springframework.cloud.netflix.zuul.RoutesRefreshedEvent;
+//import org.springframework.cloud.netflix.zuul.filters.RouteLocator;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * https://github.com/ctripcorp/apollo/wiki/Java客户端使用指南#1241-environment
@@ -16,13 +22,17 @@ import java.util.Set;
 @Slf4j
 public class ApolloClientConfig {
 
-    public ApolloClientConfig() {
-        // 注册监听事件，可以通过重载方法，监听特定键的变更
-        applicationConfig().addChangeListener(this::applicationOnChangeEvent, interestedKeys);
+    //@Autowired
+    public ApolloClientConfig() {/*RouteLocator routeLocator*/
+        //this.routeLocator = routeLocator;
+
+        // 注册监听事件
+        applicationConfig().addChangeListener(this::applicationOnChangeEvent, interestedKeys);//可以通过重载方法，监听特定键的变更
         datasourceConfig().addChangeListener(this::otherConfigOnChangeEvent);
         businessConfig().addChangeListener(this::otherConfigOnChangeEvent);
     }
 
+    //private RouteLocator routeLocator;
     private final Set<String> interestedKeys = new HashSet<>();
 
     {
@@ -48,27 +58,32 @@ public class ApolloClientConfig {
     }
 
     private void applicationOnChangeEvent(ConfigChangeEvent event) {
-        // 监听端口号是否变更
-        for (String key : this.interestedKeys) {
-            ConfigChange chgInfo = event.getChange(key);
-            log.info(String.format("Found change - key: %s, oldValue: %s, newValue: %s, changeType: %s",
-                    chgInfo.getPropertyName(),
-                    chgInfo.getOldValue(),
-                    chgInfo.getNewValue(),
-                    chgInfo.getChangeType()));
-        }
+        log.info("命名空间 {} 的配置信息发生变化：Found change - {}", event.getNamespace(), formatConfigChangeInfo(event));
+
+        ApplicationContext applicationContext = SpringContextUtils.getApplicationContext();
+        applicationContext.publishEvent(new EnvironmentChangeEvent(event.changedKeys()));
+        //applicationContext.publishEvent(new RoutesRefreshedEvent(routeLocator));
     }
 
     private void otherConfigOnChangeEvent(ConfigChangeEvent changeEvent) {
-        log.info("命名空间 {} 的配置信息发生变化", changeEvent.getNamespace());
-        for (String key : changeEvent.changedKeys()) {
-            ConfigChange change = changeEvent.getChange(key);
-            log.info(String.format("Found change - key: %s, oldValue: %s, newValue: %s, changeType: %s",
-                    change.getPropertyName(),
-                    change.getOldValue(),
-                    change.getNewValue(),
-                    change.getChangeType()));
-        }
+        log.info("命名空间 {} 的配置信息发生变化：Found change - {}", changeEvent.getNamespace(), formatConfigChangeInfo(changeEvent));
+
+        ApplicationContext applicationContext = SpringContextUtils.getApplicationContext();
+        applicationContext.publishEvent(new EnvironmentChangeEvent(changeEvent.changedKeys()));
+        //applicationContext.publishEvent(new RoutesRefreshedEvent(routeLocator));
+    }
+
+    private Object formatConfigChangeInfo(ConfigChangeEvent changeEvent) {
+        return changeEvent.changedKeys().stream()
+                .map(key -> {
+                    ConfigChange chgInfo = changeEvent.getChange(key);
+                    Map<String, Object> chgMap = new HashMap<>();
+                    chgMap.put("key", chgInfo.getPropertyName());
+                    chgMap.put("oldValue", chgInfo.getOldValue());
+                    chgMap.put("newValue", chgInfo.getNewValue());
+                    chgMap.put("changeType", chgInfo.getChangeType());
+                    return chgMap;
+                }).collect(Collectors.toList());
     }
 
 }

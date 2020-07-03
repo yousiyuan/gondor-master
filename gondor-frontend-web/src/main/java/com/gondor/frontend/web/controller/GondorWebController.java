@@ -95,4 +95,14 @@ public class GondorWebController extends SuperController {
         return map;
     }
 
+    @GetMapping("/constant")
+    @ResponseBody
+    public Map<String, Object> testApolloConstant() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("appId", super.apolloConstant.code);
+        map.put("appSecret", super.apolloConstant.secret);
+        map.put("pandaUrl", super.apolloConstant.pandaUrl);
+        return map;
+    }
+
 }
