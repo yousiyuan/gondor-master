@@ -92,6 +92,17 @@
                 <artifactId>ojdbc6</artifactId>
                 <version>${ojdbc6.version}</version>
             </dependency>
+            <!-- 携程分布式配置中心框架apollo -->
+            <dependency>
+                <groupId>com.ctrip.framework.apollo</groupId>
+                <artifactId>apollo-client</artifactId>
+                <version>1.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ctrip.framework.apollo</groupId>
+                <artifactId>apollo-core</artifactId>
+                <version>1.6.1</version>
+            </dependency>
             <!--logback日志组件-->
             <dependency>
                 <groupId>net.logstash.logback</groupId>

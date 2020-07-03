@@ -1,0 +1,7 @@
+mvn install:install-file -Dfile=C:\tmp\apollo-client-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-client -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-biz-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-biz -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-buildtools-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-buildtools -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-common-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-common -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-core-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-core -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-mockserver-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-mockserver -Dversion=1.6.1 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\tmp\apollo-openapi-1.6.1.jar -DgroupId=com.ctrip.framework.apollo -DartifactId=apollo-openapi -Dversion=1.6.1 -Dpackaging=jar
