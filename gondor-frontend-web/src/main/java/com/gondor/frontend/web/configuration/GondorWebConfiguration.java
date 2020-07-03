@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Import;
 @EnableFeignClients(basePackages = {"com.gondor.frontend.client"})
 @Configuration
 @Import(value = {SpringContextUtils.class, BalanceConfig.class, JacksonConfig.class, ApolloClientConfig.class})
-@ComponentScan(basePackages = {"com.gondor.frontend.fallbackfactory"})
+@ComponentScan(basePackages = {"com.gondor.frontend.fallbackfactory", "com.gondor.frontend.utils"})
 public class GondorWebConfiguration {
 
     @Bean

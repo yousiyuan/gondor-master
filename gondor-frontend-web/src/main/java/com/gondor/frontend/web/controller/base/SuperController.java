@@ -4,7 +4,7 @@ import com.ctrip.framework.apollo.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gondor.frontend.client.CustomerApiClient;
 import com.gondor.frontend.client.ProductApiClient;
-import com.gondor.frontend.client.ThirdPartyApiClient;
+//import com.gondor.frontend.client.ThirdPartyApiClient;
 import com.gondor.frontend.web.constant.ApolloConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +16,8 @@ public abstract class SuperController {
     @Autowired
     protected CustomerApiClient customerApiClient;
 
-    @Autowired
-    protected ThirdPartyApiClient thirdPartyApiClient;
+//    @Autowired
+//    protected ThirdPartyApiClient thirdPartyApiClient;
 
     @Autowired
     protected Config application;

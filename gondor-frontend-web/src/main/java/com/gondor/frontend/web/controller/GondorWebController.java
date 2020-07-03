@@ -1,8 +1,10 @@
 package com.gondor.frontend.web.controller;
 
 import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
+import com.gondor.frontend.client.ThirdPartyApiClient;
 import com.gondor.frontend.dto.Customer;
 import com.gondor.frontend.dto.Product;
+import com.gondor.frontend.utils.FeignUtils;
 import com.gondor.frontend.web.controller.base.SuperController;
 import com.gondor.master.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,10 +60,13 @@ public class GondorWebController extends SuperController {
         return customerApiClient.customerList();
     }
 
+    /**
+     * 通过原生Feign动态构建FeignClient对象，实现http api调用
+     */
     @GetMapping("/ip")
     @ResponseBody
     public String ipInfoTest() {
-        String str = thirdPartyApiClient.queryIpAddressInfo(KEY);
+        String str = FeignUtils.createFeignClient(apolloConstant.pandaUrl, ThirdPartyApiClient.class).queryIpAddressInfo(KEY);
         System.out.println(JsonUtils.format(str));
         return str;
     }
